@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Zenith — AI Agent That Actually Executes</title>
+  <link rel="icon" href="images/zenith.png">
+  <link rel="stylesheet" href="styles/index.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+</head>
+<body>
+<div class="landing">
+  <!-- Background -->
+  <div class="bg-animation">
+    <div class="bg-orb bg-orb-1"></div>
+    <div class="bg-orb bg-orb-2"></div>
+    <div class="bg-orb bg-orb-3"></div>
+    <div class="bg-orb bg-orb-4"></div>
+    <div class="bg-grid-overlay"></div>
+  </div>
+  <canvas id="particleCanvas" style="position:fixed;inset:0;pointer-events:none;z-index:0;"></canvas>
+
+  <!-- Navbar -->
+  <nav class="landing-nav">
+    <a href="index.html" class="nav-brand">
+      <img src="images/zenith.png" alt="Zenith Logo" class="nav-brand-logo">
+      <span class="nav-brand-name">Zenith</span>
+    </a>
+    <div class="nav-actions">
+      <button class="theme-toggle theme-toggle-sm theme-dark" id="themeToggle" type="button" title="Switch theme">
+        <span class="theme-toggle-track"><span class="theme-toggle-thumb">
+          <svg class="theme-icon theme-icon-sun" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+          <svg class="theme-icon theme-icon-moon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg>
+        </span></span>
+      </button>
+      <a href="login.html" class="btn btn-ghost" id="navSignIn">Sign In</a>
+      <a href="signup.html" class="btn btn-primary" id="navGetStarted">Get Started</a>
+      <button class="nav-mobile-toggle" id="mobileMenuToggle" aria-label="Open menu">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+          <line x1="3" y1="6" x2="21" y2="6"/>
+          <line x1="3" y1="12" x2="21" y2="12"/>
+          <line x1="3" y1="18" x2="21" y2="18"/>
+        </svg>
+      </button>
+    </div>
+  </nav>
+
+  <!-- Mobile Menu -->
+  <div class="nav-mobile-menu" id="mobileMenu">
+    <a href="#features" class="mobile-nav-link" onclick="closeMobileMenu()">⚡ Features</a>
+    <a href="#demo" class="mobile-nav-link" onclick="closeMobileMenu()">💬 Demo</a>
+    <div class="nav-mobile-actions" id="mobileNavActions">
+      <a href="login.html" class="btn btn-ghost">Sign In</a>
+      <a href="signup.html" class="btn btn-primary">Get Started — Free</a>
+    </div>
+  </div>
+
+  <!-- Hero -->
+  <section class="landing-hero" id="hero">
+    <div class="hero-badge">
+      <img src="images/power.png" alt="Powered" class="badge-dot">
+      Powered by Claude AI · Now in Beta
+    </div>
+
+    <h1 class="hero-title">
+      Your AI Agent That
+      <span class="hero-title-gradient"> Actually Executes</span>
+    </h1>
+
+    <p class="hero-subtitle">
+      Zenith doesn't just answer questions — it runs your code, creates full projects,
+      searches the web, and automates recurring tasks 24/7. All in one chat.
+    </p>
+
+    <div class="hero-actions">
+      <a href="signup.html" class="btn btn-primary btn-xl" id="heroCta">
+        <span>Start for Free</span>
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+          <path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </a>
+    </div>
+
+    <div class="hero-stats">
+      <div class="stat"><span class="stat-number">7</span><span class="stat-label">AI Tools</span></div>
+      <div class="stat-divider"></div>
+      <div class="stat"><span class="stat-number">∞</span><span class="stat-label">Scheduled Tasks</span></div>
+      <div class="stat-divider"></div>
+      <div class="stat"><span class="stat-number">3</span><span class="stat-label">Languages</span></div>
+    </div>
+  </section>
+
+  <!-- Demo Preview -->
+  <section class="landing-demo" id="demo">
+    <div class="demo-window">
+      <div class="demo-titlebar">
+        <div class="demo-dots"><span></span><span></span><span></span></div>
+        <span class="demo-title">Zenith Chat</span>
+      </div>
+      <div class="demo-sidebar">
+        <div class="demo-nav-item demo-nav-active"><span>💬</span> Chats</div>
+        <div class="demo-nav-item"><span>⏰</span> Tasks</div>
+        <div class="demo-nav-item"><span>📁</span> Projects</div>
+        <div class="demo-session"><span class="demo-session-dot"></span> Gold price tracker</div>
+      </div>
+      <div class="demo-chat">
+        <div class="demo-msg demo-msg-user" style="animation-delay:0s">
+          <div class="demo-msg-avatar">👤</div>
+          <div class="demo-msg-bubble">Build me a gold price tracker that runs every 3 hours and logs to Excel</div>
+        </div>
+        <div class="demo-msg demo-msg-assistant" style="animation-delay:0.15s">
+          <div class="demo-msg-avatar">✦</div>
+          <div class="demo-msg-bubble">I'll create that for you! Setting up a web search → extract → Excel pipeline...</div>
+        </div>
+        <div class="demo-msg demo-msg-tool" style="animation-delay:0.3s">
+          <div class="demo-tool-card">
+            <span class="demo-tool-icon">⏰</span>
+            <div>
+              <div class="demo-tool-name">schedule_task</div>
+              <div class="demo-tool-status">✅ Scheduled — runs every 3h for 30 days</div>
+            </div>
+          </div>
+        </div>
+        <div class="demo-msg demo-msg-assistant" style="animation-delay:0.45s">
+          <div class="demo-msg-avatar">✦</div>
+          <div class="demo-msg-bubble">Done! Your gold tracker is live. It will search, extract the current rate, and append it to gold_prices.xlsx every 3 hours. Check the Tasks tab to monitor progress.</div>
+        </div>
+        <div class="demo-input-row">
+          <div class="demo-input">Ask Zenith anything...</div>
+          <button class="demo-send-btn">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+              <path d="M14 2L2 7l5 1.5L8.5 14 14 2z" stroke="white" stroke-width="1.5" stroke-linejoin="round"/>
+            </svg>
+          </button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Features -->
+  <section class="landing-features" id="features">
+    <div class="section-header">
+      <h2 class="section-title">Everything you need in one agent</h2>
+      <p class="section-subtitle">Zenith combines intelligent conversation with real-world execution capabilities</p>
+    </div>
+    <div class="features-grid" id="featuresGrid"></div>
+  </section>
+
+  <!-- CTA -->
+  <section class="landing-cta">
+    <div class="cta-inner">
+      <img src="images/zenith.png" alt="Zenith Logo" class="cta-logo">
+      <h2 class="cta-title">Ready to connect the dots?</h2>
+      <p class="cta-subtitle">Start chatting with Zenith and see what your ideas can become.</p>
+      <a href="signup.html" class="btn btn-primary btn-xl" id="ctaBtn">Create Free Account</a>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="landing-footer">
+    <span class="footer-copy">© Copyright 2026 Zenith</span>
+  </footer>
+</div>
+
+<script src="scripts/script.js"></script>
+</body>
+</html>
