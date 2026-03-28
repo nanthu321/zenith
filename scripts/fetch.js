@@ -180,64 +180,133 @@ function showChat() {
 }
 
 // ── Render Messages ──
-function renderMessages() {
-  messagesList.innerHTML = messages.map((msg, idx) => {
-    const isUser = msg.role === 'user';
-    const isLast = idx === messages.length - 1;
-    const timeStr = msg.created_at ? new Date(msg.created_at).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true }) : '';
+function buildMessageHtml(msg, idx) {
+  const isUser = msg.role === 'user';
+  const isLast = idx === messages.length - 1;
+  const timeStr = msg.created_at ? new Date(msg.created_at).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true }) : '';
 
-    if (isUser) {
-      return `<div class="message-row message-row-user ${isLast ? 'message-last' : ''}">
-        <div class="message-body message-body-user">
-          ${msg.content ? `<div class="message-bubble message-bubble-user">${escapeHtml(msg.content)}</div>` : ''}
-          ${timeStr ? `<div class="message-footer message-footer-user"><span class="message-meta">${timeStr}</span></div>` : ''}
-        </div>
-        <div class="message-avatar message-avatar-user">
-          <svg width="20" height="20" viewBox="0 0 32 32" fill="none"><circle cx="16" cy="11" r="5.5" fill="white" opacity="0.9"/><path d="M5 28.5C5 22.15 9.92 17 16 17C22.08 17 27 22.15 27 28.5" stroke="white" stroke-width="2.2" stroke-linecap="round" fill="none" opacity="0.85"/></svg>
-        </div>
-      </div>`;
-    } else {
-      const html = renderMarkdown(msg.content || '');
-      const toolCalls = msg.tool_calls || [];
-      let toolHtml = '';
-      if (toolCalls.length > 0) {
-        toolHtml = '<div class="claude-activity-summary">' + toolCalls.map(tc => {
-          const cfg = TOOL_SUMMARY[tc.tool] || { icon: '🔧', label: tc.tool };
-          const isDone = tc.status === 'done';
-          return `<div class="claude-activity-indicator ${isDone ? 'claude-activity-done' : 'claude-activity-live'}">
-            ${isDone ? '<span class="claude-tool-status-dot claude-tool-status-dot-ok"></span>' : '<span class="claude-activity-spinner"></span>'}
-            <span class="claude-activity-icon">${cfg.icon}</span>
-            <span class="claude-activity-label">${cfg.label}</span>
-          </div>`;
-        }).join('') + '</div>';
-      }
-
-      const copyAttr = (msg.content || '').replace(/\\/g, '\\\\').replace(/'/g, "\\'").replace(/"/g, '&quot;').replace(/\n/g, '\\n');
-
-      return `<div class="message-row message-row-assistant ${isLast ? 'message-last' : ''}">
-        <div class="message-avatar message-avatar-assistant">
-          <img src="images/zenith.png" alt="Zenith" width="24" height="24" style="border-radius:50%;object-fit:cover;">
-        </div>
-        <div class="message-body message-body-assistant">
-          <div class="message-sender">Zenith</div>
-          ${toolHtml}
-          ${msg.isStreaming && !msg.content ? '<div class="mb-typing-dots"><span></span><span></span><span></span></div>' :
-            `<div class="message-bubble message-bubble-assistant">
-              <div class="message-content-html">${html}</div>
-              ${msg.isStreaming && msg.content ? '<span class="streaming-cursor"></span>' : ''}
-            </div>`}
-          ${timeStr && !msg.isStreaming ? `<div class="message-footer"><span class="message-meta">${timeStr}</span>
-            <button class="message-copy-btn" onclick="copyMessage(this)" data-content="${copyAttr}" title="Copy"><svg width="14" height="14" viewBox="0 0 24 24" fill="none"><rect x="9" y="9" width="13" height="13" rx="2" stroke="currentColor" stroke-width="1.8"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></button>
-          </div>` : ''}
-        </div>
-      </div>`;
+  if (isUser) {
+    return `<div class="message-row message-row-user ${isLast ? 'message-last' : ''}" data-msg-idx="${idx}">
+      <div class="message-body message-body-user">
+        ${msg.content ? `<div class="message-bubble message-bubble-user">${escapeHtml(msg.content)}</div>` : ''}
+        ${timeStr ? `<div class="message-footer message-footer-user"><span class="message-meta">${timeStr}</span></div>` : ''}
+      </div>
+      <div class="message-avatar message-avatar-user">
+        <svg width="20" height="20" viewBox="0 0 32 32" fill="none"><circle cx="16" cy="11" r="5.5" fill="white" opacity="0.9"/><path d="M5 28.5C5 22.15 9.92 17 16 17C22.08 17 27 22.15 27 28.5" stroke="white" stroke-width="2.2" stroke-linecap="round" fill="none" opacity="0.85"/></svg>
+      </div>
+    </div>`;
+  } else {
+    const html = renderMarkdown(msg.content || '');
+    const toolCalls = msg.tool_calls || [];
+    let toolHtml = '';
+    if (toolCalls.length > 0) {
+      toolHtml = '<div class="claude-activity-summary">' + toolCalls.map(tc => {
+        const cfg = TOOL_SUMMARY[tc.tool] || { icon: '🔧', label: tc.tool };
+        const isDone = tc.status === 'done';
+        return `<div class="claude-activity-indicator ${isDone ? 'claude-activity-done' : 'claude-activity-live'}">
+          ${isDone ? '<span class="claude-tool-status-dot claude-tool-status-dot-ok"></span>' : '<span class="claude-activity-spinner"></span>'}
+          <span class="claude-activity-icon">${cfg.icon}</span>
+          <span class="claude-activity-label">${cfg.label}</span>
+        </div>`;
+      }).join('') + '</div>';
     }
-  }).join('');
+
+    const copyAttr = (msg.content || '').replace(/\\/g, '\\\\').replace(/'/g, "\\'").replace(/"/g, '&quot;').replace(/\n/g, '\\n');
+
+    return `<div class="message-row message-row-assistant ${isLast ? 'message-last' : ''}" data-msg-idx="${idx}">
+      <div class="message-avatar message-avatar-assistant">
+        <img src="images/zenith.png" alt="Zenith" width="24" height="24" style="border-radius:50%;object-fit:cover;">
+      </div>
+      <div class="message-body message-body-assistant">
+        <div class="message-sender">Zenith</div>
+        ${toolHtml}
+        ${msg.isStreaming && !msg.content ? '<div class="mb-typing-dots"><span></span><span></span><span></span></div>' :
+          `<div class="message-bubble message-bubble-assistant">
+            <div class="message-content-html">${html}</div>
+            ${msg.isStreaming && msg.content ? '<span class="streaming-cursor"></span>' : ''}
+          </div>`}
+        ${timeStr && !msg.isStreaming ? `<div class="message-footer"><span class="message-meta">${timeStr}</span>
+          <button class="message-copy-btn" onclick="copyMessage(this)" data-content="${copyAttr}" title="Copy"><svg width="14" height="14" viewBox="0 0 24 24" fill="none"><rect x="9" y="9" width="13" height="13" rx="2" stroke="currentColor" stroke-width="1.8"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></button>
+        </div>` : ''}
+      </div>
+    </div>`;
+  }
 }
 
-function scrollToBottom() {
-  const bottom = document.getElementById('messagesBottom');
-  if (bottom) bottom.scrollIntoView({ behavior: 'smooth' });
+function renderMessages() {
+  messagesList.innerHTML = messages.map((msg, idx) => buildMessageHtml(msg, idx)).join('');
+}
+
+/**
+ * Incrementally update ONLY the last assistant message's text content
+ * in the DOM instead of replacing the entire element (prevents blinking).
+ * During streaming we only touch the inner .message-content-html node.
+ */
+function updateLastAssistantMessage() {
+  const idx = messages.length - 1;
+  if (idx < 0) return;
+  const msg = messages[idx];
+  const existing = messagesList.querySelector(`[data-msg-idx="${idx}"]`);
+
+  if (!existing) {
+    // Element doesn't exist yet — append it
+    const temp = document.createElement('div');
+    temp.innerHTML = buildMessageHtml(msg, idx);
+    const newEl = temp.firstElementChild;
+    if (newEl) messagesList.appendChild(newEl);
+    return;
+  }
+
+  // During streaming, surgically update only the content node to avoid flicker
+  if (msg.isStreaming && msg.content) {
+    // Update the rendered markdown content in-place
+    const contentNode = existing.querySelector('.message-content-html');
+    if (contentNode) {
+      contentNode.innerHTML = renderMarkdown(msg.content);
+      // Ensure the bubble is visible (hide typing dots if they existed)
+      const dots = existing.querySelector('.mb-typing-dots');
+      if (dots) dots.remove();
+      // Ensure bubble wrapper exists
+      let bubble = existing.querySelector('.message-bubble-assistant');
+      if (!bubble) {
+        // First token arrived — replace typing dots with the bubble
+        const body = existing.querySelector('.message-body-assistant');
+        if (body) {
+          const dotsEl = body.querySelector('.mb-typing-dots');
+          if (dotsEl) dotsEl.remove();
+          const bubbleDiv = document.createElement('div');
+          bubbleDiv.className = 'message-bubble message-bubble-assistant';
+          bubbleDiv.innerHTML = `<div class="message-content-html">${renderMarkdown(msg.content)}</div><span class="streaming-cursor"></span>`;
+          // Insert after tool calls or sender label
+          const sender = body.querySelector('.message-sender');
+          const toolSummary = body.querySelector('.claude-activity-summary');
+          const insertAfter = toolSummary || sender;
+          if (insertAfter && insertAfter.nextSibling) {
+            body.insertBefore(bubbleDiv, insertAfter.nextSibling);
+          } else {
+            body.appendChild(bubbleDiv);
+          }
+        }
+      }
+      return;
+    }
+  }
+
+  // For tool_start/tool_result or non-streaming final update, do a full element replace
+  const temp = document.createElement('div');
+  temp.innerHTML = buildMessageHtml(msg, idx);
+  const newEl = temp.firstElementChild;
+  if (newEl) existing.replaceWith(newEl);
+}
+
+let _scrollRAF = null;
+function scrollToBottom(instant) {
+  if (_scrollRAF) return; // throttle: max once per animation frame
+  _scrollRAF = requestAnimationFrame(() => {
+    _scrollRAF = null;
+    const bottom = document.getElementById('messagesBottom');
+    if (bottom) bottom.scrollIntoView({ behavior: instant ? 'instant' : 'smooth' });
+  });
 }
 
 // ── Send Message (SSE streaming) ──
@@ -253,7 +322,7 @@ async function sendMessage(content) {
 
   messages.push({ role: 'user', content: content.trim(), created_at: new Date().toISOString() });
   messages.push({ role: 'assistant', content: '', isStreaming: true, tool_calls: [] });
-  renderMessages();
+  renderMessages();  // Full render to add the user message + empty assistant bubble
   scrollToBottom();
 
   isStreaming = true;
@@ -334,8 +403,9 @@ async function sendMessage(content) {
             }
           } catch {}
           currentEvent = '';
-          renderMessages();
-          scrollToBottom();
+          // Only update the streaming assistant bubble (no full re-render)
+          updateLastAssistantMessage();
+          scrollToBottom(true); // instant scroll during streaming — no jitter
         }
       }
     }
@@ -517,7 +587,10 @@ document.addEventListener('DOMContentLoaded', () => {
       updateSendBtn(btnId, ta.value);
     });
     ta.addEventListener('keydown', (e) => {
-      if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); ta.closest('form').dispatchEvent(new Event('submit')); }
+      if (e.key === 'Enter' && !e.shiftKey) {
+        e.preventDefault();
+        ta.closest('form').dispatchEvent(new Event('submit', { bubbles: true, cancelable: true }));
+      }
     });
   });
 

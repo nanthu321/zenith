@@ -161,22 +161,7 @@ pre code { background: none; padding: 0; color: var(--text-primary); }
 .landing { min-height: 100vh; overflow-x: hidden; overflow-y: auto; position: relative; background: var(--bg-base); }
 
 /* ── Background Animation ── */
-.bg-animation { position: fixed; inset: 0; pointer-events: none; z-index: 0; overflow: hidden; }
-.bg-orb { position: absolute; border-radius: 50%; filter: blur(120px); opacity: 0.12; will-change: transform; }
-.bg-orb-1 { width: 600px; height: 600px; background: radial-gradient(circle, #E42527, transparent); top: -200px; left: -200px; animation: orbFloat1 14s ease-in-out infinite; }
-.bg-orb-2 { width: 500px; height: 500px; background: radial-gradient(circle, #F9B21C, transparent); bottom: -150px; right: -150px; animation: orbFloat2 18s ease-in-out infinite; }
-.bg-orb-3 { width: 450px; height: 450px; background: radial-gradient(circle, #0A9949, transparent); top: 40%; left: 55%; animation: orbFloat3 20s ease-in-out infinite; }
-.bg-orb-4 { width: 400px; height: 400px; background: radial-gradient(circle, #226DB4, transparent); top: 15%; right: 10%; animation: orbFloat4 22s ease-in-out infinite; }
-.bg-grid-overlay { position: absolute; inset: 0; background-image: linear-gradient(var(--border-subtle) 1px, transparent 1px), linear-gradient(90deg, var(--border-subtle) 1px, transparent 1px); background-size: 60px 60px; opacity: 0.2; mask-image: radial-gradient(ellipse 70% 70% at 50% 50%, black, transparent); -webkit-mask-image: radial-gradient(ellipse 70% 70% at 50% 50%, black, transparent); }
-[data-theme="light"] .bg-orb { opacity: 0.08; }
-[data-theme="light"] .bg-grid-overlay { opacity: 0.15; }
-@keyframes orbFloat1 { 0%, 100% { transform: translate(0,0) scale(1); } 33% { transform: translate(80px,40px) scale(1.1); } 66% { transform: translate(-30px,80px) scale(0.95); } }
-@keyframes orbFloat2 { 0%, 100% { transform: translate(0,0) scale(1); } 33% { transform: translate(-60px,-50px) scale(1.05); } 66% { transform: translate(40px,-80px) scale(0.9); } }
-@keyframes orbFloat3 { 0%, 100% { transform: translate(-50%,-50%) scale(1); } 50% { transform: translate(-50%,-50%) translate(60px,-40px) scale(1.1); } }
-@keyframes orbFloat4 { 0%, 100% { transform: translate(0,0) scale(1); } 33% { transform: translate(-50px,60px) scale(1.08); } 66% { transform: translate(30px,-40px) scale(0.92); } }
 
-/* ── Particle Canvas ── */
-#particleCanvas { position: fixed; inset: 0; pointer-events: none; z-index: 0; }
 
 /* ── Navbar ── */
 .landing-nav { position: fixed; top: 0; left: 0; right: 0; z-index: 100; display: flex; align-items: center; justify-content: space-between; padding: 0 40px; height: 64px; background: rgba(10,10,15,0.85); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border-bottom: 1px solid var(--border-subtle); transition: background 0.25s ease; }

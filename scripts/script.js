@@ -151,45 +151,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  // ── Particle Canvas ──
-  const canvas = document.getElementById('particleCanvas');
-  if (canvas) {
-    const ctx = canvas.getContext('2d');
-    const COLORS = [{ r:228,g:37,b:29 },{ r:249,g:178,b:28 },{ r:10,g:153,b:73 },{ r:34,g:109,b:180 }];
-    let particles = [];
-    function resize() {
-      const dpr = window.devicePixelRatio || 1;
-      canvas.width = window.innerWidth * dpr;
-      canvas.height = window.innerHeight * dpr;
-      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-    }
-    function createParticles() {
-      const w = window.innerWidth, h = window.innerHeight;
-      const count = Math.min(Math.floor((w * h) / 25000), 80);
-      particles = [];
-      for (let i = 0; i < count; i++) {
-        const color = COLORS[Math.floor(Math.random() * COLORS.length)];
-        particles.push({ x: Math.random()*w, y: Math.random()*h, size: 1+Math.random()*2, speedY: -(0.15+Math.random()*0.35), speedX: (Math.random()-0.5)*0.3, opacity: 0.15+Math.random()*0.35, pulse: Math.random()*Math.PI*2, pulseSpeed: 0.005+Math.random()*0.015, color });
-      }
-    }
-    function animate() {
-      const w = window.innerWidth, h = window.innerHeight;
-      const dark = document.documentElement.getAttribute('data-theme') !== 'light';
-      ctx.clearRect(0, 0, w, h);
-      for (const p of particles) {
-        p.x += p.speedX; p.y += p.speedY; p.pulse += p.pulseSpeed;
-        if (p.y < -10) { p.y = h + 10; p.x = Math.random() * w; }
-        if (p.x < -10) p.x = w + 10; if (p.x > w + 10) p.x = -10;
-        const alpha = (dark ? p.opacity : p.opacity * 0.9) * (0.6 + 0.4 * Math.sin(p.pulse));
-        ctx.beginPath(); ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
-        ctx.fillStyle = `rgba(${p.color.r},${p.color.g},${p.color.b},${alpha})`; ctx.fill();
-      }
-      requestAnimationFrame(animate);
-    }
-    resize(); createParticles(); requestAnimationFrame(animate);
-    let resizeTimer;
-    window.addEventListener('resize', () => { clearTimeout(resizeTimer); resizeTimer = setTimeout(() => { resize(); createParticles(); }, 150); }, { passive: true });
-  }
+  
 
   // ── Parallax hero ──
   const hero = document.getElementById('hero');
