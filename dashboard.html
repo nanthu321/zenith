@@ -127,23 +127,31 @@
         <h1 class="landing-greeting" id="landingGreeting">How can I help you today?</h1>
         <p class="landing-sub">Ask me anything — I can run code, build projects, search the web & schedule tasks.</p>
         <div class="landing-input-wrap">
-          <div class="ci-wrapper ci-wrapper--landing">
+          <div class="ci-wrapper ci-wrapper--landing" id="landingCiWrapper">
             <div class="ci-container">
-              <div class="ci-box">
+              <div class="ci-box" id="landingCiBox">
+                <!-- Attachment strip (landing) -->
+                <div class="ci-attachments" id="landingAttachments" style="display:none"></div>
                 <form class="ci-row" id="landingInputForm" action="javascript:void(0)">
                   <div class="ci-left">
-                    <button type="button" class="ci-icon-btn" title="Attach files" disabled>
+                    <button type="button" class="ci-icon-btn" id="landingPlusBtn" title="Attach files">
                       <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg>
                     </button>
                   </div>
                   <textarea class="ci-textarea" id="landingTextarea" placeholder="Ask me anything…" rows="1"></textarea>
                   <div class="ci-right">
+                    <span class="ci-badge" id="landingBadge" style="display:none">0</span>
                     <button type="submit" class="ci-send" id="landingSendBtn" disabled>
                       <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M12 19V5M12 5l-6 6M12 5l6 6" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
                     </button>
                   </div>
                 </form>
               </div>
+              <!-- Hidden file inputs (landing) -->
+              <input type="file" id="landingFileAny" multiple hidden>
+              <input type="file" id="landingFileImage" accept="image/*" multiple hidden>
+              <input type="file" id="landingFileVideo" accept="video/*" multiple hidden>
+              <input type="file" id="landingFileAudio" accept="audio/*" multiple hidden>
             </div>
           </div>
         </div>
@@ -163,28 +171,229 @@
       <!-- Bottom input (shown when chat is active) -->
       <div class="ci-wrapper" id="chatInputWrapper" style="display:none">
         <div class="ci-container">
-          <div class="ci-box">
+          <div class="ci-box" id="chatCiBox">
+            <!-- Attachment strip (chat) -->
+            <div class="ci-attachments" id="chatAttachments" style="display:none"></div>
             <form class="ci-row" id="chatInputForm" action="javascript:void(0)">
               <div class="ci-left">
-                <button type="button" class="ci-icon-btn" title="Attach files" disabled>
+                <button type="button" class="ci-icon-btn" id="chatPlusBtn" title="Attach files">
                   <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg>
                 </button>
               </div>
               <textarea class="ci-textarea" id="chatTextarea" placeholder="Message Zenith..." rows="1"></textarea>
               <div class="ci-right">
+                <span class="ci-badge" id="chatBadge" style="display:none">0</span>
                 <button type="submit" class="ci-send" id="chatSendBtn" disabled>
                   <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M12 19V5M12 5l-6 6M12 5l6 6" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
                 </button>
               </div>
             </form>
           </div>
+          <!-- Hidden file inputs (chat) -->
+          <input type="file" id="chatFileAny" multiple hidden>
+          <input type="file" id="chatFileImage" accept="image/*" multiple hidden>
+          <input type="file" id="chatFileVideo" accept="video/*" multiple hidden>
+          <input type="file" id="chatFileAudio" accept="audio/*" multiple hidden>
         </div>
       </div>
-    </div>
+
+      </div>
   </main>
 </div>
 
+<!-- Popup menu (shared, positioned via JS — outside overflow containers) -->
+<div class="ci-menu" id="ciMenu" style="display:none"></div>
+
+<!-- ═══ Profile Menu Popup ═══ -->
+<div class="pm-menu-overlay" id="pmMenuOverlay" style="display:none">
+  <div id="pmPopupMenu" class="pm-menu">
+    <!-- User info header -->
+    <div class="pm-menu-header">
+      <div class="pm-menu-avatar" id="pmMenuAvatar">NA</div>
+      <div class="pm-menu-user">
+        <span class="pm-menu-name" id="pmMenuName">User</span>
+        <span class="pm-menu-handle" id="pmMenuHandle">@user</span>
+      </div>
+    </div>
+    <div class="pm-menu-divider"></div>
+    <!-- Menu items -->
+    <button class="pm-menu-item" id="pmBtnProfile">
+      <div class="pm-menu-item-avatar" id="pmMenuItemAvatar">NA</div>
+      <span>Profile</span>
+    </button>
+    <button class="pm-menu-item" id="pmBtnSettings">
+      <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><path d="M7.5 2h3l.4 2.1a5.5 5.5 0 011.3.8l2-.8 1.5 2.6-1.6 1.3a5.8 5.8 0 010 1.6l1.6 1.3-1.5 2.6-2-.8a5.5 5.5 0 01-1.3.8L10.5 16h-3l-.4-2.1a5.5 5.5 0 01-1.3-.8l-2 .8-1.5-2.6 1.6-1.3a5.8 5.8 0 010-1.6L2.3 7.1l1.5-2.6 2 .8a5.5 5.5 0 011.3-.8L7.5 2z" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/><circle cx="9" cy="9" r="2.5" stroke="currentColor" stroke-width="1.3"/></svg>
+      <span>Settings</span>
+    </button>
+    <button class="pm-menu-item pm-menu-item-help" id="pmBtnHelp">
+      <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><circle cx="9" cy="9" r="7" stroke="currentColor" stroke-width="1.3"/><path d="M6.5 7a2.5 2.5 0 015 0c0 1.5-2.5 1.5-2.5 3" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/><circle cx="9" cy="13" r="0.8" fill="currentColor"/></svg>
+      <span>Help</span>
+      <svg class="pm-chevron" width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M5 3l4 4-4 4" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </button>
+    <div class="pm-menu-divider"></div>
+    <button class="pm-menu-item pm-menu-logout" id="pmBtnLogout">
+      <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><path d="M6.5 2.5H4A1.5 1.5 0 002.5 4v10A1.5 1.5 0 004 15.5h2.5M12 12.5l3.5-3.5L12 5.5M7 9h8.5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      <span>Log out</span>
+    </button>
+  </div>
+</div>
+
+<!-- ═══ Edit Profile Modal ═══ -->
+<div class="pm-modal-overlay" id="pmProfileOverlay" style="display:none">
+  <div class="pm-modal pm-modal-profile" id="pmProfileModal">
+    <h2 class="pm-modal-title">Edit profile</h2>
+    <div class="pm-profile-avatar-section">
+      <div class="pm-profile-avatar-large" id="pmProfileAvatarLarge">NA</div>
+    </div>
+    <div class="pm-form-group">
+      <label class="pm-form-label">Display name</label>
+      <input type="text" class="pm-form-input" id="pmDisplayName" placeholder="Your display name">
+    </div>
+    <div class="pm-form-group">
+      <label class="pm-form-label">Username</label>
+      <input type="text" class="pm-form-input" id="pmUsername" placeholder="Your username">
+    </div>
+    <p class="pm-profile-hint">Your profile helps people recognize you. Your name and username are also used in the Zenith app.</p>
+    <div class="pm-modal-actions">
+      <button class="pm-btn pm-btn-cancel" id="pmProfileCancel">Cancel</button>
+      <button class="pm-btn pm-btn-save" id="pmProfileSave">Save</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ Settings Modal ═══ -->
+<div class="pm-modal-overlay" id="pmSettingsOverlay" style="display:none">
+  <div class="pm-modal pm-modal-settings" id="pmSettingsModal">
+    <button class="pm-settings-close" id="pmSettingsClose">
+      <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M5 5l10 10M15 5L5 15" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+    </button>
+    <div class="pm-settings-layout">
+      <!-- Sidebar tabs -->
+      <nav class="pm-settings-nav">
+        <button class="pm-settings-tab pm-settings-tab-active" data-stab="personalization" id="pmTabPersonalization">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="3" stroke="currentColor" stroke-width="1.2"/><path d="M8 1v2M8 13v2M1 8h2M13 8h2M2.9 2.9l1.4 1.4M11.7 11.7l1.4 1.4M2.9 13.1l1.4-1.4M11.7 4.3l1.4-1.4" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>
+          Personalization
+        </button>
+        <button class="pm-settings-tab" data-stab="connectors" id="pmTabConnectors">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M5.5 2v3.5a1.5 1.5 0 003 0V2" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/><path d="M7 5.5v3" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/><circle cx="7" cy="11" r="2.5" stroke="currentColor" stroke-width="1.2"/><path d="M12 6.5a2 2 0 00-2-2" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/><path d="M13.5 6.5a3.5 3.5 0 00-3.5-3.5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>
+          Connectors
+        </button>
+        <button class="pm-settings-tab" data-stab="account" id="pmTabAccount">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="5" r="3" stroke="currentColor" stroke-width="1.2"/><path d="M2 14c0-3 2.5-5 6-5s6 2 6 5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>
+          Account
+        </button>
+      </nav>
+      <!-- Content area -->
+      <div class="pm-settings-content" id="pmSettingsContent">
+        <!-- Personalization panel -->
+        <div class="pm-settings-panel" id="pmPanelPersonalization">
+          <h3 class="pm-settings-heading">Personalization</h3>
+          <p class="pm-settings-desc">Tell Zenith about yourself so it can give better, more tailored responses.</p>
+          <div class="pm-form-group">
+            <label class="pm-form-label">About you</label>
+            <textarea class="pm-form-textarea" id="pmPersonalizationText" rows="6" placeholder="What do you do? What are you working on? What are your preferences for how Zenith should respond?"></textarea>
+            <span class="pm-form-hint" id="pmPersonalizationCount">0/1500 characters</span>
+          </div>
+          <div class="pm-settings-panel-actions">
+            <button class="pm-btn pm-btn-save" id="pmSavePreferences">Save preferences</button>
+          </div>
+        </div>
+        <!-- Connectors panel -->
+        <div class="pm-settings-panel" id="pmPanelConnectors" style="display:none">
+          <div class="pm-connectors-header">
+            <div>
+              <h3 class="pm-settings-heading">Connectors</h3>
+              <p class="pm-settings-desc" style="margin-bottom:0">Allow Zenith to reference other apps and services for more context.</p>
+            </div>
+          </div>
+          <div class="pm-connectors-list" id="pmConnectorsList"></div>
+        </div>
+        <!-- Account panel -->
+        <div class="pm-settings-panel" id="pmPanelAccount" style="display:none">
+          <h3 class="pm-settings-heading">Account</h3>
+          <p class="pm-settings-desc">Manage your Zenith account details and preferences.</p>
+          <div class="pm-account-info">
+            <div class="pm-account-row">
+              <span class="pm-account-label">Email</span>
+              <span class="pm-account-value" id="pmAccountEmail">user@example.com</span>
+            </div>
+            <div class="pm-account-row">
+              <span class="pm-account-label">Username</span>
+              <span class="pm-account-value" id="pmAccountUsername">@user</span>
+            </div>
+            <div class="pm-account-row">
+              <span class="pm-account-label">Plan</span>
+              <span class="pm-account-value pm-account-plan">Free plan</span>
+            </div>
+          </div>
+          <div class="pm-account-danger">
+            <h4>Danger zone</h4>
+            <p>Permanently delete your account and all associated data. This action cannot be undone.</p>
+            <button class="pm-btn pm-btn-danger" id="pmDeleteAccount">Delete account</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ Help Center Modal ═══ -->
+<div class="pm-modal-overlay" id="pmHelpOverlay" style="display:none">
+  <div class="pm-modal pm-modal-help" id="pmHelpModal">
+    <button class="pm-settings-close" id="pmHelpClose">
+      <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M5 5l10 10M15 5L5 15" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+    </button>
+    <div class="pm-help-content">
+      <div class="pm-help-icon">
+        <svg width="48" height="48" viewBox="0 0 48 48" fill="none"><circle cx="24" cy="24" r="20" stroke="var(--brand-primary)" stroke-width="2.5"/><path d="M17 20a7 7 0 0114 0c0 4-7 4-7 8" stroke="var(--brand-primary)" stroke-width="2.5" stroke-linecap="round"/><circle cx="24" cy="35" r="1.8" fill="var(--brand-primary)"/></svg>
+      </div>
+      <h2 class="pm-help-title">Help Center</h2>
+      <p class="pm-help-subtitle">Get help with Zenith</p>
+      <div class="pm-help-cards">
+        <div class="pm-help-card">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/></svg>
+          <h4>Getting Started</h4>
+          <p>Learn the basics of using Zenith for your projects.</p>
+        </div>
+        <div class="pm-help-card">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/></svg>
+          <h4>Chat Features</h4>
+          <p>Upload files, images, and use AI-powered conversations.</p>
+        </div>
+        <div class="pm-help-card">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><rect x="3" y="3" width="7" height="7" rx="1.5" stroke="currentColor" stroke-width="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5" stroke="currentColor" stroke-width="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5" stroke="currentColor" stroke-width="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5" stroke="currentColor" stroke-width="1.5"/></svg>
+          <h4>Zoho Integrations</h4>
+          <p>Connect Cliq, Meeting, Connect, and Notes.</p>
+        </div>
+        <div class="pm-help-card">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/></svg>
+          <h4>Privacy &amp; Security</h4>
+          <p>How we keep your data safe and secure.</p>
+        </div>
+      </div>
+      <div class="pm-help-footer">
+        <p>Need more help? <a href="mailto:support@zenith.com">Contact support</a></p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ Upgrade Modal (placeholder) ═══ -->
+<div class="pm-modal-overlay" id="pmUpgradeOverlay" style="display:none">
+  <div class="pm-modal pm-modal-upgrade" id="pmUpgradeModal">
+    <button class="pm-settings-close" id="pmUpgradeClose">
+      <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M5 5l10 10M15 5L5 15" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+    </button>
+    <div class="pm-upgrade-content">
+      <div class="pm-upgrade-icon">⭐</div>
+      <h2>Upgrade to Pro</h2>
+      <p>Get unlimited conversations, priority support, and advanced features.</p>
+      <button class="pm-btn pm-btn-save" style="margin-top:16px">Coming soon</button>
+    </div>
+  </div>
+</div>
+
 <script src="scripts/script.js"></script>
-<script src="scripts/fetch.js"></script>
+<script src="scripts/dashboard.js"></script>
 </body>
 </html>

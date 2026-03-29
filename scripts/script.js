@@ -1,7 +1,3 @@
-/* ============================================================
-   Zenith — Global Script (Theme, Auth State, Landing Page)
-   ============================================================ */
-
 // ── API Base URL ──
 const API_BASE = 'https://backend-computer.onrender.com';
 
@@ -29,6 +25,73 @@ function updateThemeToggles(theme) {
     lbl.textContent = theme === 'dark' ? 'Light mode' : 'Dark mode';
   });
 }
+
+
+document.addEventListener('DOMContentLoaded', () => {
+  updateAuthUI();
+
+  const toggle = document.getElementById('mobileMenuToggle');
+  if (toggle) {
+    toggle.addEventListener('click', () => {
+      mobileMenuOpen = !mobileMenuOpen;
+      const menu = document.getElementById('mobileMenu');
+      if (menu) {
+        if (mobileMenuOpen) { 
+          menu.classList.add('open'); 
+          document.body.style.overflow = 'hidden'; 
+        }
+        else 
+          closeMobileMenu();
+      }
+    });
+  }
+
+  window.addEventListener('resize', () => { 
+    if (window.innerWidth > 768) 
+      closeMobileMenu(); 
+  });
+
+  // ── Features Grid ──
+  const featuresGrid = document.getElementById('featuresGrid');
+  if (featuresGrid) {
+    const features = [
+      { icon: 'fa-solid fa-bolt', title: 'Live Code Execution', desc: 'Run Python, JavaScript, and Bash directly in the cloud. See results in real time.', color: '#f59e0b' },
+      { icon: 'fa-solid fa-folder-open', title: 'Project Generation', desc: 'Ask Zenith to build complete multi-file projects. Download as ZIP instantly.', color: '#10b981' },
+      { icon: 'fa-solid fa-globe', title: 'Web Intelligence', desc: 'Search the internet for live data — prices, news, stocks — and process it instantly.', color: '#3b82f6' },
+      { icon: 'fa-solid fa-clock', title: 'Autonomous Scheduling', desc: "Schedule recurring tasks that run 24/7 even when you're offline. Excel reports included.", color: '#226DB4' },
+      { icon: 'fa-solid fa-brain', title: 'Claude AI Powered', desc: "Backed by Anthropic's Claude — the most capable AI model for complex reasoning.", color: '#ec4899' },
+      { icon: 'fa-solid fa-shield-halved', title: 'Secure & Isolated', desc: 'Every user gets a sandboxed workspace. Your data and code never cross boundaries.', color: '#06b6d4' },
+    ];
+    features.forEach((f, i) => {
+      const card = document.createElement('div');
+      card.className = 'feature-card';
+      card.style.setProperty('--feature-color', f.color);
+      card.style.animationDelay = `${i * 0.08}s`;
+      card.innerHTML = `<div class="feature-header"><div class="feature-icon" style="color:${f.color}"><i class="${f.icon}"></i></div><h3 class="feature-title">${f.title}</h3></div><p class="feature-desc">${f.desc}</p>`;
+      featuresGrid.appendChild(card);
+    });
+  }
+
+  
+
+  // ── Parallax hero ──
+  const hero = document.getElementById('hero');
+  if (hero) {
+    window.addEventListener('mousemove', (e) => {
+      const x = (e.clientX - window.innerWidth / 2) / window.innerWidth * 20;
+      const y = (e.clientY - window.innerHeight / 2) / window.innerHeight * 20;
+      hero.style.setProperty('--hero-x', x + 'px');
+      hero.style.setProperty('--hero-y', y + 'px');
+    });
+  }
+
+  // ── Redirect logged-in users from auth pages ──
+  const isAuthPage = window.location.pathname.includes('login') || window.location.pathname.includes('signup');
+  
+  if (isAuthPage && isLoggedIn()) {
+    window.location.href = 'dashboard.html';
+  }
+});
 
 document.addEventListener('click', (e) => {
   const btn = e.target.closest('.theme-toggle, #themeToggle');
@@ -109,64 +172,7 @@ let mobileMenuOpen = false;
 function closeMobileMenu() {
   mobileMenuOpen = false;
   const menu = document.getElementById('mobileMenu');
-  if (menu) menu.classList.remove('open');
+  if (menu) 
+    menu.classList.remove('open');
   document.body.style.overflow = '';
 }
-
-document.addEventListener('DOMContentLoaded', () => {
-  updateAuthUI();
-
-  const toggle = document.getElementById('mobileMenuToggle');
-  if (toggle) {
-    toggle.addEventListener('click', () => {
-      mobileMenuOpen = !mobileMenuOpen;
-      const menu = document.getElementById('mobileMenu');
-      if (menu) {
-        if (mobileMenuOpen) { menu.classList.add('open'); document.body.style.overflow = 'hidden'; }
-        else closeMobileMenu();
-      }
-    });
-  }
-
-  window.addEventListener('resize', () => { if (window.innerWidth > 768) closeMobileMenu(); });
-
-  // ── Features Grid ──
-  const featuresGrid = document.getElementById('featuresGrid');
-  if (featuresGrid) {
-    const features = [
-      { icon: 'fa-solid fa-bolt', title: 'Live Code Execution', desc: 'Run Python, JavaScript, and Bash directly in the cloud. See results in real time.', color: '#f59e0b' },
-      { icon: 'fa-solid fa-folder-open', title: 'Project Generation', desc: 'Ask Zenith to build complete multi-file projects. Download as ZIP instantly.', color: '#10b981' },
-      { icon: 'fa-solid fa-globe', title: 'Web Intelligence', desc: 'Search the internet for live data — prices, news, stocks — and process it instantly.', color: '#3b82f6' },
-      { icon: 'fa-solid fa-clock', title: 'Autonomous Scheduling', desc: "Schedule recurring tasks that run 24/7 even when you're offline. Excel reports included.", color: '#226DB4' },
-      { icon: 'fa-solid fa-brain', title: 'Claude AI Powered', desc: "Backed by Anthropic's Claude — the most capable AI model for complex reasoning.", color: '#ec4899' },
-      { icon: 'fa-solid fa-shield-halved', title: 'Secure & Isolated', desc: 'Every user gets a sandboxed workspace. Your data and code never cross boundaries.', color: '#06b6d4' },
-    ];
-    features.forEach((f, i) => {
-      const card = document.createElement('div');
-      card.className = 'feature-card';
-      card.style.setProperty('--feature-color', f.color);
-      card.style.animationDelay = `${i * 0.08}s`;
-      card.innerHTML = `<div class="feature-header"><div class="feature-icon" style="color:${f.color}"><i class="${f.icon}"></i></div><h3 class="feature-title">${f.title}</h3></div><p class="feature-desc">${f.desc}</p>`;
-      featuresGrid.appendChild(card);
-    });
-  }
-
-  
-
-  // ── Parallax hero ──
-  const hero = document.getElementById('hero');
-  if (hero) {
-    window.addEventListener('mousemove', (e) => {
-      const x = (e.clientX - window.innerWidth / 2) / window.innerWidth * 20;
-      const y = (e.clientY - window.innerHeight / 2) / window.innerHeight * 20;
-      hero.style.setProperty('--hero-x', x + 'px');
-      hero.style.setProperty('--hero-y', y + 'px');
-    });
-  }
-
-  // ── Redirect logged-in users from auth pages ──
-  const isAuthPage = window.location.pathname.includes('login') || window.location.pathname.includes('signup');
-  if (isAuthPage && isLoggedIn()) {
-    window.location.href = 'dashboard.html';
-  }
-});

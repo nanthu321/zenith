@@ -255,7 +255,9 @@
 .ci-box:focus-within { border-color: var(--brand-primary); box-shadow: 0 0 0 1px var(--brand-primary); }
 .ci-box--focus-pulse { animation: ciFocusPulse 0.6s ease; }
 @keyframes ciFocusPulse { 0% { box-shadow: 0 0 0 1px var(--brand-primary); } 40% { box-shadow: 0 0 0 4px rgba(34,109,180,0.3), 0 0 20px rgba(34,109,180,0.15); } 100% { box-shadow: 0 0 0 1px var(--brand-primary); } }
-.ci-attachments { display: flex; align-items: center; gap: 8px; padding: 12px 14px 4px; overflow-x: auto; animation: ciSlideUp 0.2s ease; border-radius: 24px 24px 0 0; }
+.ci-attachments { display: flex; align-items: center; gap: 8px; padding: 12px 14px 4px; overflow-x: auto; animation: ciSlideUp 0.2s ease; border-radius: 24px 24px 0 0; scrollbar-width: thin; }
+.ci-attachments::-webkit-scrollbar { height: 4px; }
+.ci-attachments::-webkit-scrollbar-thumb { background: var(--border-strong); border-radius: 4px; }
 .ci-att-card { display: flex; align-items: center; gap: 8px; padding: 6px 8px 6px 6px; background: var(--bg-hover); border: 1px solid var(--border-subtle); border-radius: 12px; flex-shrink: 0; max-width: 220px; transition: border-color 0.15s, box-shadow 0.15s; }
 .ci-att-card:hover { border-color: var(--border-brand); box-shadow: 0 2px 8px rgba(0,0,0,0.12); }
 .ci-att-thumb { width: 38px; height: 38px; border-radius: 8px; overflow: hidden; flex-shrink: 0; background: var(--bg-overlay); display: flex; align-items: center; justify-content: center; }
@@ -304,6 +306,17 @@
 .ci-menu-label { font-size: 0.84rem; font-weight: 500; color: var(--text-primary); line-height: 1.3; }
 .ci-menu-hint { font-size: 0.7rem; color: var(--text-muted); font-weight: 400; line-height: 1.3; }
 .ci-menu-divider { height: 1px; background: var(--border-subtle); margin: 4px 8px; }
+/* Drag-over state on the wrapper */
+.ci-dragover { position: relative; }
+.ci-dragover::after {
+  content: '📎 Drop files here';
+  position: absolute; inset: 0; z-index: 20;
+  display: flex; align-items: center; justify-content: center;
+  background: rgba(34,109,180,0.08); border: 2px dashed #226DB4; border-radius: 20px;
+  backdrop-filter: blur(4px); color: var(--brand-primary);
+  font-size: 0.95rem; font-weight: 600;
+  animation: ciFadeIn 0.15s ease; pointer-events: none;
+}
 @keyframes ciSlideUp { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
 @keyframes ciFadeIn { from { opacity: 0; } to { opacity: 1; } }
 @keyframes ciPulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
@@ -381,7 +394,9 @@
 .pm-menu-item svg { flex-shrink: 0; opacity: 0.7; }
 .pm-menu-item:hover svg { opacity: 1; }
 .pm-menu-item-avatar { width: 18px; height: 18px; border-radius: 50%; background: linear-gradient(135deg, #226DB4, #0A9949); display: flex; align-items: center; justify-content: center; font-size: 0.5rem; font-weight: 700; color: white; flex-shrink: 0; }
+.pm-menu-item-help { position: relative; }
 .pm-chevron { position: absolute; right: 10px; opacity: 0.5; }
+.pm-menu-item-help:hover .pm-chevron { opacity: 1; }
 .pm-menu-logout:hover { background: rgba(239,68,68,0.12); color: #f87171; }
 .pm-menu-logout:hover svg { color: #f87171; }
 
@@ -445,6 +460,7 @@
 .pm-connector-card:hover { border-color: var(--border-default); }
 .pm-connector-expanded { border-color: var(--brand-primary) !important; box-shadow: 0 0 0 3px var(--brand-dim); }
 .pm-connector-connected { border-color: rgba(10,153,73,0.3); }
+.pm-connector-connected:hover { border-color: rgba(10,153,73,0.5); }
 .pm-connector-row { display: flex; align-items: center; gap: 14px; padding: 14px 16px; }
 .pm-connector-logo { width: 40px; height: 40px; border-radius: 10px; background: var(--bg-overlay); display: flex; align-items: center; justify-content: center; flex-shrink: 0; overflow: hidden; transition: filter 0.25s ease, opacity 0.25s ease; color: var(--text-muted); }
 .pm-connector-logo img { width: 100%; height: 100%; object-fit: contain; border-radius: 10px; }
@@ -508,6 +524,7 @@
 .pm-help-footer { padding-top: 16px; border-top: 1px solid var(--border-subtle); }
 .pm-help-footer p { font-size: 0.82rem; color: var(--text-muted); }
 .pm-help-footer a { color: var(--brand-secondary); font-weight: 500; }
+.pm-help-footer a:hover { color: var(--brand-tertiary); }
 
 /* Upgrade modal */
 .pm-modal-upgrade { width: 400px; max-width: 95vw; padding: 48px 40px; }
